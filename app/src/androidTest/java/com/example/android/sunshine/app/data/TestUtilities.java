@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 import com.example.android.sunshine.app.utils.PollingCheck;
 
@@ -23,6 +24,7 @@ import java.util.Set;
 public class TestUtilities extends AndroidTestCase {
     static final String TEST_LOCATION = "99705";
     static final long TEST_DATE = 1419033600L;  // December 20th, 2014
+    final static String LOG_TAG = TestUtilities.class.getSimpleName();
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
@@ -36,10 +38,12 @@ public class TestUtilities extends AndroidTestCase {
             String columnName = entry.getKey();
             int idx = valueCursor.getColumnIndex(columnName);
             assertFalse("Column '" + columnName + "' not found. " + error, idx == -1);
+            Log.i(LOG_TAG, String.format("Column: %s idx: %s", columnName, idx));
             String expectedValue = entry.getValue().toString();
             assertEquals("Value '" + entry.getValue().toString() +
-                    "' did not match the expected value '" +
-                    expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
+                "' did not match the expected value '" +
+                expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
+            Log.i(LOG_TAG, String.format("expectedValue: %s actualValue: %s", entry.getValue().toString(), valueCursor.getString(idx)));
         }
     }
 

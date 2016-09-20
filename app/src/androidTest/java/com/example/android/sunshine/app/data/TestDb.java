@@ -19,8 +19,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class TestDb extends AndroidTestCase {
 
@@ -215,15 +219,18 @@ public class TestDb extends AndroidTestCase {
                 null // sort order
         );
 
+
         // Move the cursor to a valid database row and check to see if we got any records back
         // from the query
         assertTrue( "Error: No Records returned from location query", cursor.moveToFirst() );
-
         // Fifth Step: Validate data in resulting Cursor with the original ContentValues
         // (you can use the validateCurrentRecord function in TestUtilities to validate the
         // query if you like)
         TestUtilities.validateCurrentRecord("Error: Location Query Validation Failed",
                 cursor, testValues);
+
+        validateCurrentRecord(
+            cursor, testValues);
 
         // Move the cursor to demonstrate that there is only one record in the database
         assertFalse( "Error: More than one record returned from location query",
@@ -234,4 +241,16 @@ public class TestDb extends AndroidTestCase {
         db.close();
         return locationRowId;
     }
+
+    protected void validateCurrentRecord(Cursor valueCursor, ContentValues expectedValues) {
+        Set<Entry<String, Object>> valueSet = expectedValues.valueSet();
+        StringBuilder sb = new StringBuilder("");
+        for (Map.Entry<String, Object> entry : valueSet) {
+            String columnName = entry.getKey();
+            int idx = valueCursor.getColumnIndex(columnName);
+            sb.append(String.format("(%s, %s), ", valueCursor.getColumnName(idx), valueCursor.getString(idx)));
+        }
+        Log.i(LOG_TAG, sb.toString());
+    }
+
 }
