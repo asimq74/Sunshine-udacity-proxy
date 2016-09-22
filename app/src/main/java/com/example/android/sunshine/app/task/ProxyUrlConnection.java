@@ -29,6 +29,7 @@ public class ProxyUrlConnection implements Factory<HttpURLConnection> {
 			public PasswordAuthentication getPasswordAuthentication() {
 				return (new PasswordAuthentication(BuildConfig.PROXY_USER, BuildConfig.PROXY_PASSWORD.toCharArray()));
 			}
+
 		};
 		Authenticator.setDefault(authenticator);
 		URL url = new URL(urlString);

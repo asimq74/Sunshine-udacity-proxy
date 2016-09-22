@@ -21,21 +21,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Vector;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
+import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
+import com.example.android.sunshine.app.task.HttpUrlConnectionFactory;
+import com.example.android.sunshine.app.task.ProxyUrlConnection;
+import com.example.android.sunshine.app.task.StandardUrlConnection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,11 +47,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 	private boolean DEBUG = true;
 	private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 	private final Context mContext;
-	private ArrayAdapter<String> mForecastAdapter;
 
-	public FetchWeatherTask(Context context, ArrayAdapter<String> forecastAdapter) {
+	public FetchWeatherTask(Context context) {
 		mContext = context;
-		mForecastAdapter = forecastAdapter;
 	}
 
 	/**
@@ -66,28 +65,71 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 		// Students: First, check if the location with this city name exists in the db
 		// If it exists, return the current ID
 		// Otherwise, insert it using the content resolver and the base URI
-		return -1;
-	}
+		long locationId;
 
-	/*
-			Students: This code will allow the FetchWeatherTask to continue to return the strings that
-			the UX expects so that we can continue to test the application even once we begin using
-			the database.
-	 */
-	String[] convertContentValuesToUXFormat(Vector<ContentValues> cvv) {
-		// return strings to keep UI functional for now
-		String[] resultStrs = new String[cvv.size()];
-		for (int i = 0; i < cvv.size(); i++) {
-			ContentValues weatherValues = cvv.elementAt(i);
-			String highAndLow = formatHighLows(
-					weatherValues.getAsDouble(WeatherEntry.COLUMN_MAX_TEMP),
-					weatherValues.getAsDouble(WeatherEntry.COLUMN_MIN_TEMP));
-			resultStrs[i] = getReadableDateString(
-					weatherValues.getAsLong(WeatherEntry.COLUMN_DATE)) +
-					" - " + weatherValues.getAsString(WeatherEntry.COLUMN_SHORT_DESC) +
-					" - " + highAndLow;
+		// First, check if the location with this city name exists in the db
+		Cursor locationCursor = mContext.getContentResolver().query(
+				WeatherContract.LocationEntry.CONTENT_URI,
+				new String[]{WeatherContract.LocationEntry._ID},
+				WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?",
+				new String[]{locationSetting},
+				null);
+
+		if (locationCursor.moveToFirst()) {
+			int locationIdIndex = locationCursor.getColumnIndex(WeatherContract.LocationEntry._ID);
+			locationId = locationCursor.getLong(locationIdIndex);
+		} else {
+			// Now that the content provider is set up, inserting rows of data is pretty simple.
+			// First create a ContentValues object to hold the data you want to insert.
+			ContentValues locationValues = new ContentValues();
+
+			// Then add the data, along with the corresponding name of the data type,
+			// so the content provider knows what kind of value is being inserted.
+			locationValues.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, cityName);
+			locationValues.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, locationSetting);
+			locationValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT, lat);
+			locationValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, lon);
+
+			// Finally, insert location data into the database.
+			Uri insertedUri = mContext.getContentResolver().insert(
+					WeatherContract.LocationEntry.CONTENT_URI,
+					locationValues
+			);
+
+			Log.i(LOG_TAG, String.format("insertedUri: %s", insertedUri.toString()));
+
+			// The resulting URI contains the ID for the row.  Extract the locationId from the Uri.
+			locationId = ContentUris.parseId(insertedUri);
 		}
-		return resultStrs;
+
+		locationCursor.close();
+		// Wait, that worked?  Yes!
+
+		// First, check if the location with this city name exists in the db
+//		Cursor locationTableCursor = mContext.getContentResolver().query(
+//				WeatherContract.LocationEntry.CONTENT_URI,
+//				null,
+//				null,
+//				null,
+//				null);
+//
+//			try {
+//				while (locationTableCursor.moveToNext()) {
+//					Log.i(LOG_TAG,
+//							String.format("cursor %s = %s, %s = %s, %s = %s",
+//									WeatherContract.LocationEntry._ID,
+//									locationTableCursor.getLong(locationTableCursor.getColumnIndex(LocationEntry._ID)),
+//									WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
+//									locationTableCursor.getString(locationTableCursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_SETTING)),
+//									LocationEntry.COLUMN_CITY_NAME,
+//									locationTableCursor.getString(locationTableCursor.getColumnIndex(LocationEntry.COLUMN_CITY_NAME))
+//							));
+//				}
+//			} finally {
+//				locationTableCursor.close();
+//			}
+
+		return locationId;
 	}
 
 	@Override
@@ -129,10 +171,11 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 					.appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
 					.build();
 
-			URL url = new URL(builtUri.toString());
+			final String urlString = builtUri.toString();
+			URL url = new URL(urlString);
 
-			// Create the request to OpenWeatherMap, and open the connection
-			urlConnection = (HttpURLConnection) url.openConnection();
+
+			urlConnection = BuildConfig.SHOULD_USE_PROXY ? new ProxyUrlConnection(urlString).create() : new StandardUrlConnection(urlString).create();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.connect();
 
@@ -177,7 +220,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 		}
 
 		try {
-			return getWeatherDataFromJson(forecastJsonStr, locationQuery);
+			getWeatherDataFromJson(forecastJsonStr, locationQuery);
 		} catch (JSONException e) {
 			Log.e(LOG_TAG, e.getMessage(), e);
 			e.printStackTrace();
@@ -187,54 +230,13 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 	}
 
 	/**
-	 * Prepare the weather high/lows for presentation.
-	 */
-	private String formatHighLows(double high, double low) {
-		// Data is fetched in Celsius by default.
-		// If user prefers to see in Fahrenheit, convert the values here.
-		// We do this rather than fetching in Fahrenheit so that the user can
-		// change this option without us having to re-fetch the data once
-		// we start storing the values in a database.
-		SharedPreferences sharedPrefs =
-				PreferenceManager.getDefaultSharedPreferences(mContext);
-		String unitType = sharedPrefs.getString(
-				mContext.getString(R.string.pref_units_key),
-				mContext.getString(R.string.pref_units_metric));
-
-		if (unitType.equals(mContext.getString(R.string.pref_units_imperial))) {
-			high = (high * 1.8) + 32;
-			low = (low * 1.8) + 32;
-		} else if (!unitType.equals(mContext.getString(R.string.pref_units_metric))) {
-			Log.d(LOG_TAG, "Unit type not found: " + unitType);
-		}
-
-		// For presentation, assume the user doesn't care about tenths of a degree.
-		long roundedHigh = Math.round(high);
-		long roundedLow = Math.round(low);
-
-		String highLowStr = roundedHigh + "/" + roundedLow;
-		return highLowStr;
-	}
-
-	/* The date/time conversion code is going to be moved outside the asynctask later,
-	 * so for convenience we're breaking it out into its own method now.
-	 */
-	private String getReadableDateString(long time) {
-		// Because the API returns a unix timestamp (measured in seconds),
-		// it must be converted to milliseconds in order to be converted to valid date.
-		Date date = new Date(time);
-		SimpleDateFormat format = new SimpleDateFormat("E, MMM d");
-		return format.format(date).toString();
-	}
-
-	/**
 	 * Take the String representing the complete forecast in JSON Format and
 	 * pull out the data we need to construct the Strings needed for the wireframes.
 	 *
 	 * Fortunately parsing is easy:  constructor takes the JSON string and converts it
 	 * into an Object hierarchy for us.
 	 */
-	private String[] getWeatherDataFromJson(String forecastJsonStr,
+	private void getWeatherDataFromJson(String forecastJsonStr,
 			String locationSetting)
 			throws JSONException {
 
@@ -284,7 +286,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 			long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
 
 			// Insert the new weather information into the database
-			Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
+			Vector<ContentValues> cVVector = new Vector<>(weatherArray.length());
 
 			// OWM returns daily forecasts based upon the local time of the city that is being
 			// asked for, which means that we need to know the GMT offset to translate this data
@@ -357,50 +359,20 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 				cVVector.add(weatherValues);
 			}
 
+			int inserted = 0;
 			// add to database
 			if (cVVector.size() > 0) {
-				// Student: call bulkInsert to add the weatherEntries to the database here
+				ContentValues[] cvArray = new ContentValues[cVVector.size()];
+				cVVector.toArray(cvArray);
+				inserted = mContext.getContentResolver().bulkInsert(WeatherEntry.CONTENT_URI, cvArray);
 			}
 
-			// Sort order:  Ascending, by date.
-			String sortOrder = WeatherEntry.COLUMN_DATE + " ASC";
-			Uri weatherForLocationUri = WeatherEntry.buildWeatherLocationWithStartDate(
-					locationSetting, System.currentTimeMillis());
-
-			// Students: Uncomment the next lines to display what what you stored in the bulkInsert
-
-//            Cursor cur = mContext.getContentResolver().query(weatherForLocationUri,
-//                    null, null, null, sortOrder);
-//
-//            cVVector = new Vector<ContentValues>(cur.getCount());
-//            if ( cur.moveToFirst() ) {
-//                do {
-//                    ContentValues cv = new ContentValues();
-//                    DatabaseUtils.cursorRowToContentValues(cur, cv);
-//                    cVVector.add(cv);
-//                } while (cur.moveToNext());
-//            }
-
-			Log.d(LOG_TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
-
-			String[] resultStrs = convertContentValuesToUXFormat(cVVector);
-			return resultStrs;
+			Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted");
 
 		} catch (JSONException e) {
 			Log.e(LOG_TAG, e.getMessage(), e);
 			e.printStackTrace();
 		}
-		return null;
 	}
 
-	@Override
-	protected void onPostExecute(String[] result) {
-		if (result != null && mForecastAdapter != null) {
-			mForecastAdapter.clear();
-			for (String dayForecastStr : result) {
-				mForecastAdapter.add(dayForecastStr);
-			}
-			// New data is back from the server.  Hooray!
-		}
-	}
 }
