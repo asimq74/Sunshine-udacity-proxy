@@ -34,7 +34,6 @@ import android.util.Log;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
-import com.example.android.sunshine.app.task.HttpUrlConnectionFactory;
 import com.example.android.sunshine.app.task.ProxyUrlConnection;
 import com.example.android.sunshine.app.task.StandardUrlConnection;
 
@@ -163,17 +162,18 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 			final String FORMAT_PARAM = "mode";
 			final String UNITS_PARAM = "units";
 			final String DAYS_PARAM = "cnt";
+			final String APPID_PARAM = "APPID";
 
 			Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
 					.appendQueryParameter(QUERY_PARAM, params[0])
 					.appendQueryParameter(FORMAT_PARAM, format)
 					.appendQueryParameter(UNITS_PARAM, units)
 					.appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+					.appendQueryParameter(APPID_PARAM, BuildConfig.OPEN_WEATHER_MAP_API_KEY)
 					.build();
 
 			final String urlString = builtUri.toString();
 			URL url = new URL(urlString);
-
 
 			urlConnection = BuildConfig.SHOULD_USE_PROXY ? new ProxyUrlConnection(urlString).create() : new StandardUrlConnection(urlString).create();
 			urlConnection.setRequestMethod("GET");
