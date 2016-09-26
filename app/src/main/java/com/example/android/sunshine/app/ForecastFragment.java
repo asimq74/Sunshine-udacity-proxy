@@ -130,6 +130,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		return rootView;
 	}
 
+	protected void onLocationChanged() {
+		updateWeather();
+		getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+	}
+
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		mForecastAdapter.swapCursor(cursor);

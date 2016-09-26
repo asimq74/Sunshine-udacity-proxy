@@ -333,7 +333,7 @@ public class WeatherProvider extends ContentProvider {
 		// Student: Start by getting a writable database
 		final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		final int match = sUriMatcher.match(uri);
-		int rowsUpdated = 0;
+		int rowsUpdated;
 		// Student: Use the uriMatcher to match the WEATHER and LOCATION URI's we are going to
 		// handle.  If it doesn't match these, throw an UnsupportedOperationException.
 		switch (match) {

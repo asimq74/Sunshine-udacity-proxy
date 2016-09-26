@@ -28,14 +28,19 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private String mLocation = "";
+    private final String FORECASTFRAGMENT_TAG = "FORECASTFRAGMENT_TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedPrefs =
+            PreferenceManager.getDefaultSharedPreferences(this);
+        mLocation = sharedPrefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
     }
