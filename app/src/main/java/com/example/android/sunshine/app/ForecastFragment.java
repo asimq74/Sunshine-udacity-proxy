@@ -130,11 +130,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		return rootView;
 	}
 
-	protected void onLocationChanged() {
-		updateWeather();
-		getLoaderManager().initLoader(FORECAST_LOADER, null, this);
-	}
-
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		mForecastAdapter.swapCursor(cursor);
@@ -143,6 +138,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		mForecastAdapter.swapCursor(null);
+	}
+
+	protected void onLocationChanged() {
+		updateWeather();
+		getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
 	}
 
 	@Override
@@ -156,12 +156,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		updateWeather();
 	}
 
 	private void updateWeather() {
