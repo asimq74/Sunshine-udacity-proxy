@@ -27,7 +27,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
-	private final String FORECASTFRAGMENT_TAG = "FORECASTFRAGMENT_TAG";
+	private final String FORECASTFRAGMENT_TAG = "FF_TAG";
 	private final String LOG_TAG = MainActivity.class.getSimpleName();
 	private String mLocation = "";
 
