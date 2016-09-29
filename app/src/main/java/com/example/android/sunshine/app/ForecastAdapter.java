@@ -6,6 +6,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -23,11 +24,17 @@ public class ForecastAdapter extends CursorAdapter {
 	 */
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		// our view is pretty simple here --- just a text view
-		// we'll keep the UI functional with a simple (and slow!) binding.
-
-		TextView tv = (TextView) view;
-		tv.setText(convertCursorRowToUXFormat(cursor));
+		LinearLayout listItemRoot = (LinearLayout) view;
+		TextView date = (TextView)view.findViewById(R.id.list_item_date_textview);
+		TextView forecast = (TextView)view.findViewById(R.id.list_item_forecast_textview);
+		TextView high = (TextView)view.findViewById(R.id.list_item_high_textview);
+		TextView low = (TextView)view.findViewById(R.id.list_item_low_textview);
+		boolean isMetric = Utility.isMetric(mContext);
+		final String DEGREE  = "\u00b0";
+		high.setText(String.format("%s %s", Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), isMetric), DEGREE));
+		low.setText(String.format("%s %s", Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), isMetric), DEGREE));
+		forecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
+		date.setText(Utility.formatDate(cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
 	}
 
 	/*
