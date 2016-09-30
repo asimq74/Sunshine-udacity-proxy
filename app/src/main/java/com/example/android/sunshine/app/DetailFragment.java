@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
@@ -32,13 +33,19 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	private static final int COL_WEATHER_ID = 0;
 	private static final int COL_WEATHER_MAX_TEMP = 3;
 	private static final int COL_WEATHER_MIN_TEMP = 4;
+	private static final int COL_WEATHER_HUMIDITY = 5;
+	private static final int COL_WEATHER_WIND_SPEED = 6;
+	private static final int COL_WEATHER_PRESSURE = 7;
 	private static final int DETAIL_LOADER = 0;
 	private static final String[] FORECAST_COLUMNS = {
 			WeatherEntry.TABLE_NAME + "." + WeatherEntry._ID,
 			WeatherEntry.COLUMN_DATE,
 			WeatherEntry.COLUMN_SHORT_DESC,
 			WeatherEntry.COLUMN_MAX_TEMP,
-			WeatherEntry.COLUMN_MIN_TEMP
+			WeatherEntry.COLUMN_MIN_TEMP,
+			WeatherEntry.COLUMN_HUMIDITY,
+			WeatherEntry.COLUMN_WIND_SPEED,
+			WeatherEntry.COLUMN_PRESSURE
 	};
 	private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
 	private static final String LOG_TAG = DetailFragment.class.getSimpleName();
@@ -96,7 +103,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
 		View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 		return rootView;
 	}
@@ -106,20 +112,48 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		if (!data.moveToFirst()) {
 			return;
 		}
-
-		String weatherDate = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
+		ViewHolder viewHolder = new ViewHolder(getView());
+		getView().setTag(viewHolder);
+		String weatherDate = Utility.getFriendlyDayString(getActivity(), data.getLong(ForecastFragment.COL_WEATHER_DATE));
 		String weatherDesc = data.getString(COL_WEATHER_DESC);
 		boolean isMetric = Utility.isMetric(getActivity());
 		String high = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
 		String low = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
-		mForecastStr = String.format("%s - %s - %s/%s", weatherDate, weatherDesc, high, low);
-		if (null != mForecastStr) {
-			((TextView) getView().findViewById(R.id.detail_text))
-					.setText(mForecastStr);
-		}
-
+		String humidity = Utility.formatHumidity(getActivity(), data.getFloat(COL_WEATHER_HUMIDITY));
+		String pressure = Utility.formatPressure(getActivity(), data.getFloat(COL_WEATHER_PRESSURE));
+		String wind = Utility.formatWind(getActivity(), data.getFloat(COL_WEATHER_WIND_SPEED));
+		viewHolder.dateView.setText(weatherDate);
+		viewHolder.highTempView.setText(high);
+		viewHolder.descriptionView.setText(weatherDesc);
+		viewHolder.lowTempView.setText(low);
+		viewHolder.iconView.setImageResource(R.drawable.ic_launcher);
+		viewHolder.humidityView.setText(humidity);
+		viewHolder.pressureView.setText(pressure);
+		viewHolder.windView.setText(wind);
 		if (mShareActionProvider != null) {
 			mShareActionProvider.setShareIntent(createShareForecastIntent());
+		}
+	}
+
+	public static class ViewHolder {
+		public final ImageView iconView;
+		public final TextView dateView;
+		public final TextView descriptionView;
+		public final TextView highTempView;
+		public final TextView lowTempView;
+		public final TextView humidityView;
+		public final TextView pressureView;
+		public final TextView windView;
+
+		public ViewHolder(View view) {
+			iconView = (ImageView) view.findViewById(R.id.detail_item_icon);
+			dateView = (TextView) view.findViewById(R.id.detail_item_date_textview);
+			descriptionView = (TextView) view.findViewById(R.id.detail_item_forecast_textview);
+			highTempView = (TextView) view.findViewById(R.id.detail_item_high_textview);
+			lowTempView = (TextView) view.findViewById(R.id.detail_item_low_textview);
+			humidityView = (TextView) view.findViewById(R.id.detail_item_humidity);
+			pressureView = (TextView) view.findViewById(R.id.detail_item_pressure);
+			windView = (TextView) view.findViewById(R.id.detail_item_wind);
 		}
 	}
 

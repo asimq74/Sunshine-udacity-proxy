@@ -61,4 +61,13 @@
     <!-- Temperature formats in degrees -->
     <string name="format_temperature"><xliff:g id="temp">%1.0f</xliff:g>\u00B0</string>
 
+    <!-- Humidity formats in percentage -->
+    <string name="format_humidity"><xliff:g id="humidity">HUMIDITY: %1.0f</xliff:g>\uFE6A</string>
+
+    <!-- Pressure formats in percentage -->
+    <string name="format_pressure"><xliff:g id="pressure">PRESSURE: %1.0f hPa</xliff:g></string>
+
+    <!-- Wind formats in percentage -->
+    <string name="format_wind"><xliff:g id="wind">WIND: %1.0f km/H NW</xliff:g></string>
+
 </resources>

@@ -42,6 +42,17 @@ public class Utility {
 		return context.getString(R.string.format_temperature, temp);
 	}
 
+	static String formatHumidity(Context context, float humidity) {
+		return context.getString(R.string.format_humidity, humidity);
+	}
+
+	static String formatPressure(Context context, float pressure) {
+		return context.getString(R.string.format_pressure, pressure);
+	}
+
+	static String formatWind(Context context, float wind) {
+		return context.getString(R.string.format_wind, wind);
+	}
 
 	public static String getPreferredLocation(Context context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
