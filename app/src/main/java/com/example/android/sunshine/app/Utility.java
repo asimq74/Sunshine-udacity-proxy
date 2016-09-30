@@ -17,6 +17,7 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 
@@ -31,15 +32,16 @@ public class Utility {
 		return DateFormat.getDateInstance().format(date);
 	}
 
-	static String formatTemperature(double temperature, boolean isMetric) {
+	static String formatTemperature(Context context, double temperature, boolean isMetric) {
 		double temp;
 		if (!isMetric) {
 			temp = 9 * temperature / 5 + 32;
 		} else {
 			temp = temperature;
 		}
-		return String.format("%.0f", temp);
+		return context.getString(R.string.format_temperature, temp);
 	}
+
 
 	public static String getPreferredLocation(Context context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
