@@ -28,7 +28,7 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', '"43b496a199857a7b4a6650b8be611975"'
+        it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', '"xxxx"'
         it.buildConfigField 'String', 'PROXY_USER', '"xxx"'
         it.buildConfigField 'String', 'PROXY_PASSWORD', '"xxx"'
         it.buildConfigField 'String', 'PROXY_SERVER', '"xxx"'
