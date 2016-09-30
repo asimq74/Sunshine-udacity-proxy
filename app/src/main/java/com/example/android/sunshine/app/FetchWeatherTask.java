@@ -15,14 +15,6 @@
  */
 package com.example.android.sunshine.app;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Vector;
-
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,6 +32,14 @@ import com.example.android.sunshine.app.task.StandardUrlConnection;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Vector;
 
 public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
@@ -240,6 +240,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 			String locationSetting)
 			throws JSONException {
 
+		Log.i(LOG_TAG, forecastJsonStr);
 		// Now we have a String representing the complete forecast in JSON Format.
 		// Fortunately parsing is easy:  constructor takes the JSON string and converts it
 		// into an Object hierarchy for us.

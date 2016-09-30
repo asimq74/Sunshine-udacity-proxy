@@ -6,7 +6,6 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -19,12 +18,25 @@ public class ForecastAdapter extends CursorAdapter {
 		super(context, c, flags);
 	}
 
+	private static final int VIEW_TYPE_TODAY = 0;
+	private static final int VIEW_TYPE_FUTURE_DAY = 1;
+	private static final int VIEW_TYPE_COUNT = 2;
+
+	@Override
+	public int getItemViewType(int position) {
+		return position == 0 ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
+	}
+
+	@Override
+	public int getViewTypeCount() {
+		return VIEW_TYPE_COUNT;
+	}
+
 	/*
 			This is where we fill-in the views with the contents of the cursor.
 	 */
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		LinearLayout listItemRoot = (LinearLayout) view;
 		TextView date = (TextView)view.findViewById(R.id.list_item_date_textview);
 		TextView forecast = (TextView)view.findViewById(R.id.list_item_forecast_textview);
 		TextView high = (TextView)view.findViewById(R.id.list_item_high_textview);
@@ -34,7 +46,7 @@ public class ForecastAdapter extends CursorAdapter {
 		high.setText(String.format("%s %s", Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), isMetric), DEGREE));
 		low.setText(String.format("%s %s", Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), isMetric), DEGREE));
 		forecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
-		date.setText(Utility.formatDate(cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
+		date.setText(Utility.getFriendlyDayString(context, cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
 	}
 
 	/*
@@ -64,7 +76,10 @@ public class ForecastAdapter extends CursorAdapter {
 	 */
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		View view = LayoutInflater.from(context).inflate(R.layout.list_item_forecast, parent, false);
+		// Choose the layout type
+		int viewType = getItemViewType(cursor.getPosition());
+		int layoutId = (viewType == VIEW_TYPE_TODAY) ? R.layout.list_item_forecast_today:R.layout.list_item_forecast;
+		View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
 
 		return view;
 	}
