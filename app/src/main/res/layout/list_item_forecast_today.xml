@@ -1,36 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Layout for weather forecast list item for today -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
+              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="@drawable/touch_selector"
+              android:background="@color/sunshine_blue"
               android:gravity="center_vertical"
               android:minHeight="?android:attr/listPreferredItemHeight"
               android:orientation="horizontal"
-              android:paddingLeft="16dp">
+              android:paddingLeft="@dimen/forecast_list_item_icon_column_width"
+>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/list_item_date_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="@color/sunshine_white"
             android:text="Today, June 18"/>
 
         <TextView
             android:id="@+id/list_item_high_textview"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="@dimen/forecast_list_item_today_high_size"
+            android:textColor="@color/sunshine_white"
+            android:text="22"/>
 
         <TextView
             android:id="@+id/list_item_low_textview"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="@dimen/forecast_list_item_today_low_size"
+            android:textColor="@color/sunshine_white"
+            android:text="12"/>
     </LinearLayout>
 
     <LinearLayout
@@ -48,6 +59,9 @@
         <TextView
             android:id="@+id/list_item_forecast_textview"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="@color/sunshine_white"/>
     </LinearLayout>
 </LinearLayout>
