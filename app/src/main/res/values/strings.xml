@@ -8,6 +8,9 @@
     -->
     <string name="app_name">Sunshine</string>
 
+    <string name="no_weather_info">No Weather Information Available</string>
+    <string name="network_not_available">No weather information available. The network is not available to fetch weather data.</string>
+
     <!--
          By convention, "action" denotes that this String will be used as the label for an Action,
          typically from the action bar.  The ActionBar is limited real estate, so shorter is better.

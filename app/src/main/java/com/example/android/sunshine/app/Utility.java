@@ -17,7 +17,10 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.text.format.Time;
 
 import java.text.DateFormat;
@@ -36,6 +39,13 @@ public class Utility {
 		return prefs.getString(context.getString(R.string.pref_units_key),
 				context.getString(R.string.pref_units_metric))
 				.equals(context.getString(R.string.pref_units_metric));
+	}
+
+	public static boolean isNetworkAvailable(@NonNull Context context) {
+		ConnectivityManager connectivityManager
+				= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
 	}
 
 	public static String formatTemperature(Context context, double temperature) {

@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -53,6 +54,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		 */
 		public void onItemSelected(Uri dateUri);
 	}
+
 	static final int COL_COORD_LAT = 7;
 	static final int COL_COORD_LONG = 8;
 	static final int COL_LOCATION_SETTING = 5;
@@ -147,6 +149,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 		// Get a reference to the ListView, and attach this adapter to it.
 		mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+		mListView.setEmptyView(rootView.findViewById(R.id.listview_forecast_empty));
 		mListView.setAdapter(mForecastAdapter);
 		// We'll call our MainActivity
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -183,6 +186,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		return rootView;
 	}
 
+	private void updateEmptyView() {
+		if (mForecastAdapter.getCount() == 0) {
+			TextView tv = (TextView) getView().findViewById(R.id.listview_forecast_empty);
+			if (null != tv) {
+				int message = R.string.no_weather_info;
+				if (!Utility.isNetworkAvailable(getActivity())) {
+					message = R.string.network_not_available;
+				}
+				tv.setText(message);
+			}
+		}
+	}
+
+
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		mForecastAdapter.swapCursor(data);
@@ -191,6 +208,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 			// to, do so now.
 			mListView.smoothScrollToPosition(mPosition);
 		}
+		updateEmptyView();
 	}
 
 	@Override
