@@ -17,6 +17,7 @@ import android.os.Bundle;
  */
 public class SunshineAuthenticator extends AbstractAccountAuthenticator {
 
+
     public SunshineAuthenticator(Context context) {
         super(context);
     }
