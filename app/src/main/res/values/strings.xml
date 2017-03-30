@@ -12,6 +12,8 @@
     <string name="network_not_available">No weather information available. The network is not available to fetch weather data.</string>
     <string name="empty_forecast_list_server_down">No weather information available. The server is not returning data.</string>
     <string name="empty_forecast_list_server_error">No weather information available. The server is not returning valid data. Please check for an updated version of Sunshine.</string>
+    <string name="empty_forecast_list_invalid_location">No weather information available. The location is invalid. Please enter a valid location.</string>
+
 
     <!--
          By convention, "action" denotes that this String will be used as the label for an Action,

@@ -81,6 +81,9 @@ public class SettingsActivity extends PreferenceActivity
             }
         } else {
             // For other preferences, set the summary to the value's simple string representation.
+            if (getString(R.string.pref_location_status_key).equals(preference.getKey())) {
+                Utility.resetLocationStatus(this);
+            }
             preference.setSummary(stringValue);
         }
         return true;

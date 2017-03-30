@@ -246,6 +246,28 @@ public class Utility {
 				SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
 	}
 
+
+	/**
+	 * Sets the location status to unknown
+	 * @param c Context to get the PreferenceManager from.
+	 */
+	public static void resetLocationStatus(Context c) {
+		setLocationStatus(c, SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+	}
+
+	/**
+	 * Sets the location status into shared preference.  This function should not be called from
+	 * the UI thread because it uses commit to write to the shared preferences.
+	 * @param c Context to get the PreferenceManager from.
+	 * @param locationStatus The IntDef value to set
+	 */
+	public static void setLocationStatus(Context c, @SunshineSyncAdapter.LocationStatus int locationStatus) {
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+		SharedPreferences.Editor spe = sp.edit();
+		spe.putInt(c.getString(R.string.pref_location_status_key), locationStatus);
+		spe.commit();
+	}
+
 	public static String getPreferredLocation(Context context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		return prefs.getString(context.getString(R.string.pref_location_key),
