@@ -8,17 +8,6 @@
               android:background="@drawable/today_touch_selector">
 
 
-   <!-- <com.example.android.sunshine.app.DoubleImageView
-        android:id="@+id/image1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/art_clear"
-        android:drawableRight="@drawable/art_clouds"
-        android:textColor="#FFF"
-        android:textSize="32sp"
-        android:text="5 - 5"
-        android:spacing="15dp"/> -->
-
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"
