@@ -1,11 +1,11 @@
 <!-- Layout for weather forecast list item for today -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@drawable/today_touch_selector"
-              android:gravity="center_vertical"
-              android:minHeight="?android:attr/listPreferredItemHeight"
-              android:orientation="horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/today_touch_selector"
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:orientation="horizontal">
 
 
     <LinearLayout
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceLarge"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/list_item_high_textview"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-light"
             android:textColor="@color/white"
-            android:textSize="72sp"/>
+            android:textSize="72sp" />
 
         <TextView
             android:id="@+id/list_item_low_textview"
@@ -41,7 +41,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:textColor="@color/white"
-            android:textSize="36sp"/>
+            android:textSize="36sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -57,16 +57,17 @@
             android:id="@+id/list_item_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal" />
 
         <TextView
             android:id="@+id/list_item_forecast_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceLarge"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
 
     </LinearLayout>

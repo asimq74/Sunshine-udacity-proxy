@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -85,6 +86,8 @@ public class Utility {
 		}
 		return -1;
 	}
+
+
 
 	/**
 	 * Given a day, returns just the name to use for that day.
@@ -172,7 +175,8 @@ public class Utility {
 	 * @param dateInMillis The date in milliseconds
 	 * @return a user-friendly representation of the date.
 	 */
-	public static String getFriendlyDayString(Context context, long dateInMillis) {
+	@SuppressLint("StringFormatMatches")
+    public static String getFriendlyDayString(Context context, long dateInMillis) {
 		// The day string for forecast uses the following logic:
 		// For today: "Today, June 8"
 		// For tomorrow:  "Tomorrow"
@@ -457,6 +461,44 @@ public class Utility {
 		return activeNetwork != null &&
 				activeNetwork.isConnectedOrConnecting();
 	}
+
+
+    /**
+     * Helper method to provide the art urls according to the weather condition id returned
+     * by the OpenWeatherMap call.
+     *
+     * @param context Context to use for retrieving the URL format
+     * @param weatherId from OpenWeatherMap API response
+     * @return url for the corresponding weather artwork. null if no relation is found.
+     */
+    public static String getArtUrlForWeatherCondition(Context context, int weatherId) {
+        // Based on weather code data found at:
+        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+        if (weatherId >= 200 && weatherId <= 232) {
+            return context.getString(R.string.format_art_url, "storm");
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            return context.getString(R.string.format_art_url, "light_rain");
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            return context.getString(R.string.format_art_url, "rain");
+        } else if (weatherId == 511) {
+            return context.getString(R.string.format_art_url, "snow");
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            return context.getString(R.string.format_art_url, "rain");
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            return context.getString(R.string.format_art_url, "snow");
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            return context.getString(R.string.format_art_url, "fog");
+        } else if (weatherId == 761 || weatherId == 781) {
+            return context.getString(R.string.format_art_url, "storm");
+        } else if (weatherId == 800) {
+            return context.getString(R.string.format_art_url, "clear");
+        } else if (weatherId == 801) {
+            return context.getString(R.string.format_art_url, "light_clouds");
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            return context.getString(R.string.format_art_url, "clouds");
+        }
+        return null;
+    }
 
 	/**
 	 * Resets the location status.  (Sets it to SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN)

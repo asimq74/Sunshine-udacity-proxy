@@ -5,4 +5,5 @@
     <dimen name="forecast_list_item_icon_column_width">60dp</dimen>
     <dimen name="forecast_list_item_today_high_size">72sp</dimen>
     <dimen name="forecast_list_item_today_low_size">36sp</dimen>
+    <dimen name="notification_large_icon_default">48dp</dimen>
 </resources>
