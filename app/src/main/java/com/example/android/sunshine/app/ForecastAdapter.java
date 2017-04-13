@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.sunshine.app.task.ForecastTextSwitcher;
 
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
@@ -97,6 +98,7 @@ public class ForecastAdapter extends CursorAdapter {
         String description = Utility.getStringForWeatherCondition(context, weatherId);
         // Find TextView and set weather forecast on it
         viewHolder.descriptionView.setText(description);
+//        new ForecastTextSwitcher(mContext, viewHolder.descriptionView).execute("2");
         viewHolder.descriptionView.setContentDescription(context.getString(R.string.a11y_forecast, description));
 
         // For accessibility, we don't want a content description for the icon field
