@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
 
         ForecastFragment forecastFragment = ((ForecastFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast));
-        forecastFragment.setUseTodayLayout(true);
+        forecastFragment.setUseTodayLayout(!mTwoPane);
 
         SunshineSyncAdapter.initializeSyncAdapter(this);
 
