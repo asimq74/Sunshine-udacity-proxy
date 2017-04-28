@@ -41,4 +41,5 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         tools:layout="@android:layout/list_content" />
+
 </RelativeLayout>
