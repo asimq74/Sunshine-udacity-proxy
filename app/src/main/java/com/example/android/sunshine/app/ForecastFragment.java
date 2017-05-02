@@ -16,8 +16,10 @@
 package com.example.android.sunshine.app;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -29,6 +31,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +41,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.sunshine.app.ForecastAdapter.ForecastAdapterViewHolder;
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
@@ -56,7 +60,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		/**
 		 * DetailFragmentCallback for when an item has been selected.
 		 */
-		public void onItemSelected(Uri dateUri);
+		void onItemSelected(Uri dateUri, ForecastAdapterViewHolder vh);
 	}
 
 	static final int COL_COORD_LAT = 7;
@@ -166,8 +170,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 				String locationSetting = Utility.getPreferredLocation(getActivity());
 				((Callback) getActivity())
 						.onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-								locationSetting, date)
-						);
+								locationSetting, date), vh);
 				mPosition = vh.getAdapterPosition();
 			}
 		}, emptyView);
