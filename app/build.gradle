@@ -31,9 +31,9 @@ android {
     }
     buildTypes.each {
         it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', '"43b496a199857a7b4a6650b8be611975"'
-        it.buildConfigField 'String', 'PROXY_USER', '"xxx"'
-        it.buildConfigField 'String', 'PROXY_PASSWORD', '"xxx"'
-        it.buildConfigField 'String', 'PROXY_SERVER', '"xxx"'
+        it.buildConfigField 'String', 'PROXY_USER', '"u1c306"'
+        it.buildConfigField 'String', 'PROXY_PASSWORD', '"Metallica1!"'
+        it.buildConfigField 'String', 'PROXY_SERVER', '"gpproxy.geico.net"'
         it.buildConfigField 'Integer', 'PROXY_PORT', '80'
         it.buildConfigField 'boolean', 'SHOULD_USE_PROXY', 'false'
     }
@@ -47,6 +47,7 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support:design:25.1.1'
     compile 'com.android.support:gridlayout-v7:25.1.1'
+    compile 'com.android.support:cardview-v7:25.1.1'
     compile 'com.google.android.gms:play-services-gcm:9.0.0'
 }
 
